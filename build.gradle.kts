@@ -14,7 +14,7 @@ val asciidoctorExtensions: Configuration by configurations.creating
 plugins {
     id("java")
     id("application")
-    id("org.springframework.boot") version "3.0.2"
+    id("org.springframework.boot") version "3.1.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.8.22"
@@ -106,6 +106,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
 
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 }
 
