@@ -1,4 +1,4 @@
-package io.github.syakuis.configuration;
+package io.github.syakuis.idp.configuration;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.MessageSource

@@ -1,7 +1,7 @@
-package io.github.syakuis.configuration
+package io.github.syakuis.idp.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.syakuis.configuration.support.SimpleObjectMapper
+import io.github.syakuis.idp.configuration.support.SimpleObjectMapper
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

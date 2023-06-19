@@ -105,6 +105,8 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 }
 
 tasks {
@@ -138,5 +140,5 @@ tasks {
 }
 
 application {
-    mainClass.set("io.github.syakuis.Application")
+    mainClass.set("io.github.syakuis.idp.IdpApplication")
 }
