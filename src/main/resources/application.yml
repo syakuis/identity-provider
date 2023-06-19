@@ -2,7 +2,7 @@ logging:
   level:
     root: info
     org.springframework.web: info
-    io.github.syakuis: trace
+    io.github.syakuis.idp: trace
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
@@ -13,7 +13,7 @@ server:
   forward-headers-strategy: native
 spring:
   application:
-    name: spring-gradle-template-for-kotlin
+    name: identity-provider
   config:
     import:
       - classpath:properties/logback.yml
@@ -44,7 +44,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create
-      use-new-id-generator-mappings: false
     properties:
       hibernate:
         show_sql: false
