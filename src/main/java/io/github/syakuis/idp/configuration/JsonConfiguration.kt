@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration(proxyBeanMethods = false)
 class JsonConfiguration {
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ObjectMapper::class)
     @Bean
     fun objectMapper() : ObjectMapper {
         return SimpleObjectMapper.of(ObjectMapper())

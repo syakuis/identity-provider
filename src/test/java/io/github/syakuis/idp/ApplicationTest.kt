@@ -1,4 +1,4 @@
-package io.github.syakuis;
+package io.github.syakuis.idp;
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.BehaviorSpec

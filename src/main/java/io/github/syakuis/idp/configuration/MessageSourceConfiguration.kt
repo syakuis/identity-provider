@@ -10,13 +10,13 @@ import java.util.*
 
 @Configuration(proxyBeanMethods = false)
 class MessageSourceConfiguration(private val messageSource: MessageSource) {
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(MessageSourceAccessor::class)
     @Bean
     fun messageSourceAccessor(): MessageSourceAccessor {
         return MessageSourceAccessor(messageSource, Locale.getDefault())
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(LocalValidatorFactoryBean::class)
     @Bean
     fun validator(): LocalValidatorFactoryBean {
         val bean = LocalValidatorFactoryBean()
