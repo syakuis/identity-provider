@@ -1,7 +1,7 @@
 logging:
   level:
     root: info
-    org.springframework.web: info
+    org.springframework.web: debug
     io.github.syakuis.idp: trace
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql: trace
@@ -53,3 +53,7 @@ spring:
       pageable:
         default-page-size: 10
         one-indexed-parameters: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false

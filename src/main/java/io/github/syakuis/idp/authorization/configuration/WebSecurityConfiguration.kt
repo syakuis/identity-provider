@@ -4,13 +4,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.security.authentication.AuthenticationEventPublisher
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
+import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration(proxyBeanMethods = false)
@@ -21,7 +25,7 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
      */
     @Bean
     @ConditionalOnMissingBean(UserDetailsService::class)
-    fun inMemoryUserDetailsManager(): InMemoryUserDetailsManager {
+    fun userDetailsService(): UserDetailsService {
         return InMemoryUserDetailsManager(User.withUsername("test").password(passwordEncoder.encode("1234")).build())
     }
 
@@ -32,5 +36,25 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
     @ConditionalOnMissingBean(AuthenticationEventPublisher::class)
     fun authenticationEventPublisher(delegate: ApplicationEventPublisher): DefaultAuthenticationEventPublisher {
         return DefaultAuthenticationEventPublisher(delegate)
+    }
+
+    @Order(1)
+    @Bean
+    fun forLoginFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeRequests {
+                authorize(anyRequest, authenticated)
+            }
+
+            csrf { disable() }
+
+            formLogin {
+                loginPage = "/sign-in"
+                loginProcessingUrl = "/sign-in"
+                permitAll()
+            }
+        }
+
+        return http.build()
     }
 }

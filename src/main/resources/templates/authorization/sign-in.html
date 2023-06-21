@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>통합 로그인</title>
+    <!-- todo npm 의존성으로 변경하자 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            max-width: 331px;
+            /*padding: 15px;*/
+            margin-bottom: 64px;
+        }
+
+        .form-signin .logo {
+            margin-bottom: 64px;
+        }
+
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+
+        .form-signin .username {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin .password {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+</head>
+<body class="text-center">
+<main class="form-signin w-100 m-auto" id="app">
+    <form @submit.prevent="handleSubmit">
+        <div class="form-floating">
+            <input type="text" class="username form-control" id="floatingInput" placeholder="이메일 주소를 입력하세요." v-model="username.value">
+            <label for="floatingInput">username</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="password form-control" id="floatingPassword" placeholder="비밀번호를 입력하세요." v-model="password.value">
+            <label for="floatingPassword">password</label>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-success" type="submit">로그인</button>
+        <p class="mt-5 mb-3 text-body-secondary">&copy; syaku 2023</p>
+    </form>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script type="text/javascript">
+    function isEmpty(str) {
+        return (!str || str.length === 0 );
+    }
+
+    function isBlank(str) {
+        return (!str || /^\s*$/.test(str));
+    }
+
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                username: {
+                    value: '',
+                    invalid: false,
+                },
+                password: {
+                    value: '',
+                    invalid: false,
+                },
+            }
+        },
+        methods: {
+            handleSubmit() {
+                this.username.invalid = isBlank(this.username.value);
+                this.password.invalid = isBlank(this.password.value);
+
+                if (!this.username.invalid && !this.password.invalid) {
+                    axios.post('/login', {
+                        username: this.username.value,
+                        password: this.password.value,
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }).then((res) => {
+                        console.log(res);
+                    }).catch((error) => {
+                        console.error(error);
+                        this.$router.push("http://naver.com");
+                    });
+                }
+
+            }
+
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
