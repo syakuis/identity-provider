@@ -68,6 +68,11 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <script type="text/javascript">
+    const csrfToken = '[[${_csrf.token}]]';
+    const csrfHeaderName = '[[${_csrf.headerName}]]';
+
+    axios.defaults.headers.common[csrfHeaderName] = csrfToken;
+
     function isEmpty(str) {
         return (!str || str.length === 0 );
     }
@@ -97,18 +102,16 @@
                 this.password.invalid = isBlank(this.password.value);
 
                 if (!this.username.invalid && !this.password.invalid) {
-                    axios.post('/login', {
+                    axios.post('/sign-in', {
                         username: this.username.value,
                         password: this.password.value,
                     }, {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         }
-                    }).then((res) => {
-                        console.log(res);
                     }).catch((error) => {
                         console.error(error);
-                        this.$router.push("http://naver.com");
+                        alert(error);
                     });
                 }
 

@@ -10,11 +10,13 @@ import org.springframework.security.authentication.DefaultAuthenticationEventPub
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache
 
 
 @Configuration(proxyBeanMethods = false)
@@ -38,19 +40,29 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
         return DefaultAuthenticationEventPublisher(delegate)
     }
 
-    @Order(1)
+    @Order(2)
     @Bean
     fun forLoginFilterChain(http: HttpSecurity): SecurityFilterChain {
+        val httpRequestCache = HttpSessionRequestCache()
+        httpRequestCache.setMatchingRequestParameterName("continue")
+
         http {
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.NEVER
+            }
+
+            requestCache {
+                requestCache = httpRequestCache
+            }
+
             authorizeRequests {
                 authorize(anyRequest, authenticated)
             }
 
-            csrf { disable() }
-
             formLogin {
                 loginPage = "/sign-in"
                 loginProcessingUrl = "/sign-in"
+                defaultSuccessUrl("/profiles/me", false)
                 permitAll()
             }
         }

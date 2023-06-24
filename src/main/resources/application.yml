@@ -2,6 +2,7 @@ logging:
   level:
     root: info
     org.springframework.web: debug
+    org.springframework.security: debug
     io.github.syakuis.idp: trace
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql: trace
@@ -57,3 +58,6 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
+  mvc:
+    favicon:
+      requestMapping: favicon.ico
