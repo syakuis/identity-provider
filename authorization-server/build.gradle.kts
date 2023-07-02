@@ -9,5 +9,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("io.github.syakuis.idp.AuthorizationApplication")
+    mainClass.set("io.github.syakuis.idp.authorization.AuthorizationApplication")
 }

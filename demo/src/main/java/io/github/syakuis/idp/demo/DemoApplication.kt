@@ -1,11 +1,11 @@
-package io.github.syakuis.idp.authorization;
+package io.github.syakuis.idp.demo;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class AuthorizationApplication
+class DemoApplication
 
 fun main(args: Array<String>) {
-    runApplication<AuthorizationApplication>(*args)
+    runApplication<DemoApplication>(*args)
 }

@@ -3,7 +3,8 @@ name: identity-provider-ci
 on:
   push:
     branches:
-      - '*'
+      - 'develop'
+      - 'master'
       - '!deployment'
 env:
   SERVICE_NAME: 'identity-provider'

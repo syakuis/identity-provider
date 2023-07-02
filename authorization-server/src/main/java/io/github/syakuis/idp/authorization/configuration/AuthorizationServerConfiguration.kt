@@ -64,7 +64,7 @@ class AuthorizationServerConfiguration {
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .redirectUri("http://localhost:8080/profiles/me")
+            .redirectUri("http://localhost:8081/access-tokens")
             .postLogoutRedirectUri("http://localhost:8080")
             .scope(OidcScopes.OPENID)
             .scope(OidcScopes.PROFILE)

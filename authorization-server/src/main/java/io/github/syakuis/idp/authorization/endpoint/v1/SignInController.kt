@@ -9,6 +9,6 @@ class SignInController {
 
     @GetMapping(path = ["/sign-in"], produces = [MediaType.TEXT_HTML_VALUE])
     fun signIn(): String {
-        return "/authorization/sign-in"
+        return "sign-in"
     }
 }
