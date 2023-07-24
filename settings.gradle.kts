@@ -1,2 +1,4 @@
-rootProject.name = "spring-gradle-template-for-kotlin"
-
+rootProject.name = "identity-provider"
+include("demo")
+include("authorization-server")
+include("core-web")

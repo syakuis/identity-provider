@@ -1,7 +1,5 @@
-# Spring Gradle Template for Kotlin
+# Identity Provider
 
-## 개발환경
+## workflow
 
-- java 17
-- kotlin
-- gradle
+/demo/oauth2/authorize
