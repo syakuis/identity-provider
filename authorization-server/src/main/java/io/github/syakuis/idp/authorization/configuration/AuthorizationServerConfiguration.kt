@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
@@ -30,6 +31,7 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.Duration
 import java.util.*
 
 /**
@@ -51,24 +53,24 @@ class AuthorizationServerConfiguration {
                 , MediaTypeRequestMatcher(MediaType.TEXT_HTML))
         }
 
-//        http.oauth2ResourceServer {
-//            it.jwt(Customizer.withDefaults())
-//        }
-
         return http.build()
     }
 
     @Bean
     fun registeredClientRepository(): RegisteredClientRepository {
-        val authorizationCode = RegisteredClient.withId(UUID.randomUUID().toString())
+        val authorizationCode = RegisteredClient
+            .withId(UUID.randomUUID().toString())
             .clientId("8ec2ed80-6af0-46fa-9d6b-7ca9c5c01ea2")
             .clientSecret("{noop}secret")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .redirectUri("http://localhost:8081/oauth2/success")
+            .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(2)).build())
+            .redirectUri("http://localhost:8081/oauth2/authorize-token")
+            .redirectUri("http://localhost:8081/oauth2/authorize-success")
             .postLogoutRedirectUri("http://localhost:8080")
             .scope(OidcScopes.OPENID)
+            .scope(OidcScopes.PROFILE)
             .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
             .build()
 
@@ -80,7 +82,9 @@ class AuthorizationServerConfiguration {
             .redirectUri("http://localhost:8081/oauth2/success")
             .postLogoutRedirectUri("http://localhost:8080")
             .scope(OidcScopes.OPENID)
-            .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+            .clientSettings(ClientSettings.builder().
+            requireAuthorizationConsent(true)
+                .build())
             .build()
 
         return InMemoryRegisteredClientRepository(authorizationCode, clientCredentials)

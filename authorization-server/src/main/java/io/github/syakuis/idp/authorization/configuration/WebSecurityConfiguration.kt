@@ -26,7 +26,10 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
     @Bean
     @ConditionalOnMissingBean(UserDetailsService::class)
     fun userDetailsService(): UserDetailsService {
-        return InMemoryUserDetailsManager(User.withUsername("test").password(passwordEncoder.encode("1234")).build())
+        return InMemoryUserDetailsManager(User.withUsername("test")
+            .password(passwordEncoder.encode("1234"))
+            .roles("USER")
+            .build())
     }
 
     /**
@@ -41,25 +44,13 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
     @Order(2)
     @Bean
     fun loginFilterChain(http: HttpSecurity): SecurityFilterChain {
-//        val httpRequestCache = HttpSessionRequestCache()
-//        httpRequestCache.setMatchingRequestParameterName("continue")
-
         http {
-//            sessionManagement {
-//                sessionCreationPolicy = SessionCreationPolicy.STATELESS
-//            }
-
             authorizeRequests {
                 authorize(anyRequest, authenticated)
             }
 
-//            requestCache {
-//                requestCache = httpRequestCache
-//            }
-
             formLogin {
                 loginPage = "/sign-in"
-                loginProcessingUrl = "/sign-in"
                 permitAll()
             }
 

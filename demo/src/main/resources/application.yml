@@ -12,6 +12,7 @@ spring:
     name: idp-demo
   config:
     import:
+      - classpath:properties/idp.yml
   banner:
     location: classpath:io/github/syakuis/idp/core/banner.txt
   main:
