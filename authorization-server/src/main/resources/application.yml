@@ -13,6 +13,7 @@ spring:
   config:
     import:
       - classpath:properties/logback.yml
+      - classpath:properties/idp.yml
   banner:
     location: classpath:io/github/syakuis/idp/core/banner.txt
   main:

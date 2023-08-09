@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,6 +37,7 @@ class SimpleObjectMapper {
             mapper.registerModule(Jdk8Module())
             mapper.registerModule(module)
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+            mapper.registerModule(KotlinModule())
 
             return mapper
         }

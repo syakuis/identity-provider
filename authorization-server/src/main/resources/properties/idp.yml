@@ -1,0 +1,3 @@
+idp:
+  security:
+    login-form-url: /sign-in

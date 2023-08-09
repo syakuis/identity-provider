@@ -1,0 +1,3 @@
+@startuml
+User -> Client -> BFF -> AuthorizationServer
+@enduml

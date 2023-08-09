@@ -1,6 +1,7 @@
 package io.github.syakuis.idp.core.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.syakuis.idp.core.configuration.support.SimpleObjectMapper
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
@@ -11,6 +12,6 @@ class JsonConfiguration {
     @ConditionalOnMissingBean(ObjectMapper::class)
     @Bean
     fun objectMapper() : ObjectMapper {
-        return SimpleObjectMapper.of(ObjectMapper())
+        return SimpleObjectMapper.of(jacksonObjectMapper())
     }
 }

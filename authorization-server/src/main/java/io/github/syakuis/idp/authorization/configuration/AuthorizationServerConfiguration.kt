@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -42,6 +43,8 @@ import java.util.*
 @Configuration
 @EnableWebSecurity
 class AuthorizationServerConfiguration {
+    @Value("\${idp.security.login-form-url}")
+    private lateinit var loginFormUrl: String
     @Order(1)
     @Bean
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -49,7 +52,7 @@ class AuthorizationServerConfiguration {
         http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java).oidc(Customizer.withDefaults())
 
         http.exceptionHandling{
-            it.defaultAuthenticationEntryPointFor(LoginUrlAuthenticationEntryPoint("/sign-in")
+            it.defaultAuthenticationEntryPointFor(LoginUrlAuthenticationEntryPoint(loginFormUrl)
                 , MediaTypeRequestMatcher(MediaType.TEXT_HTML))
         }
 
