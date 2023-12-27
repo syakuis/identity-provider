@@ -6,14 +6,13 @@ dependencies {
     implementation(project(":spring-web"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-//    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-test")
-
-    implementation ("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 }
 
 application {
-    mainClass.set("io.github.syakuis.idp.demo.DemoApplication")
+    mainClass.set("io.github.syakuis.idp.authorization.AuthorizationApplication")
 }
 
 tasks {

@@ -1,6 +1,6 @@
 package io.github.syakuis.idp.demo.endpoint.v1.model
 
-import wiremock.com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * @author Seok Kyun. Choi.

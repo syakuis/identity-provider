@@ -5,13 +5,14 @@ logging:
     org.springframework.security: debug
     io.github.syakuis.idp: trace
 server:
-  port: 8081
+  port: 8080
   forward-headers-strategy: native
 spring:
   application:
-    name: idp-demo
+    name: idp-authorization
   config:
     import:
+      - classpath:properties/logback.yml
       - classpath:properties/idp.yml
   banner:
     location: classpath:io/github/syakuis/spring/core/banner.txt
