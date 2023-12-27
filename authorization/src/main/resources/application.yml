@@ -9,9 +9,10 @@ server:
   forward-headers-strategy: native
 spring:
   application:
-    name: idp-demo
+    name: idp-authorization
   config:
     import:
+      - classpath:properties/logback.yml
       - classpath:properties/idp.yml
   banner:
     location: classpath:io/github/syakuis/spring/core/banner.txt

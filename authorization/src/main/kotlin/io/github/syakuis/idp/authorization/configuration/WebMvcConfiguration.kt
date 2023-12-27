@@ -1,4 +1,4 @@
-package io.github.syakuis.idp.demo.configuration;
+package io.github.syakuis.idp.authorization.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.syakuis.spring.web.configuration.AbstractWebMvcConfiguration
