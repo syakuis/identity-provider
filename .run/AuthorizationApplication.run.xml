@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AuthorizationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-    <module name="identity-provider.authorization-server.main" />
+    <module name="identity-provider.authorization.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.syakuis.idp.authorization.AuthorizationApplication" />
     <extension name="coverage">
       <pattern>

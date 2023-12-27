@@ -1,4 +1,4 @@
 rootProject.name = "identity-provider"
 include("demo")
-include("authorization-server")
-include("core-web")
+include("authorization")
+include("spring-web")
