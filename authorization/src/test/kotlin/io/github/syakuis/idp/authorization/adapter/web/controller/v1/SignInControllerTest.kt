@@ -22,7 +22,7 @@ class SignInControllerTest : ShouldSpec() {
     @Autowired
     private lateinit var mvc: MockMvc
 
-    @Value("\${idp.security.login-form-url}")
+    @Value("\${identity-provider.security.login-form-url}")
     private lateinit var loginFormUrl: String
 
     init {
