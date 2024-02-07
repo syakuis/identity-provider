@@ -1,6 +1,9 @@
 package io.github.syakuis.idp.authorization
 
-import io.kotest.core.spec.DisplayName
+import com.jayway.jsonpath.JsonPath
+import io.kotest.assertions.print.print
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.string.shouldNotBeBlank
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +13,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.oidc.OidcScopes
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.MockMvc
@@ -23,19 +28,22 @@ import org.springframework.web.util.UriComponentsBuilder
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("Authorization Server 인증 방식")
 class AuthorizationCodeGrantTypeTest : ShouldSpec() {
     @Autowired
     private lateinit var mvc: MockMvc
 
+    @Autowired
+    private lateinit var jwtDecoder: JwtDecoder
+
     private var code = ""
+    private var accessToken = ""
 
     private val clientId = "8ec2ed80-6af0-46fa-9d6b-7ca9c5c01ea2"
     private val clientSecret = "secret"
     private val user = User.withUsername("test").password("").build()
 
     init {
-        context("OAuth2 Authentication Code 부여 방식") {
+        context("인증 코드 부여 방식 인증 테스트") {
             should("인증된 사용자가 아니므로 로그인 페이지로 이동한다.") {
                 mvc.post("/oauth2/authorize") {
                     contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -73,7 +81,7 @@ class AuthorizationCodeGrantTypeTest : ShouldSpec() {
             }
 
             should("인증 코드로 인증 요청하고 액세스 토큰을 얻는 다.") {
-                mvc.post("/oauth2/token") {
+                var result = mvc.post("/oauth2/token") {
                     contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     param("grant_type", AuthorizationGrantType.AUTHORIZATION_CODE.value)
                     param("code", code)
@@ -90,8 +98,39 @@ class AuthorizationCodeGrantTypeTest : ShouldSpec() {
                     jsonPath("$.refresh_token") {
                         isNotEmpty()
                     }
-                }
+                }.andReturn()
 
+                accessToken = JsonPath.read(result.response.contentAsString, "$.access_token")
+
+                accessToken.shouldNotBeBlank()
+            }
+
+            should("인증 토큰 디코딩") {
+                shouldNotThrow<JwtException> {
+                    jwtDecoder.decode(accessToken)
+                }
+            }
+
+            should("인증 토큰을 검증한다.") {
+                mvc.post("/oauth2/introspect") {
+                    with(httpBasic(clientId, clientSecret))
+                    contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    param("token", accessToken)
+                }.andExpect {
+                    status { isOk() }
+
+                    jsonPath("$.iss") {
+                        isNotEmpty()
+                        value("http://localhost:8080")
+                    }
+
+                    jsonPath("$.client_id") {
+                        isNotEmpty()
+                        value(clientId)
+                    }
+                }.andDo {
+                    print()
+                }
             }
         }
 

@@ -1,3 +1,11 @@
 idp:
   security:
     login-form-url: /sign-in
+    oauth2:
+      authorizationserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+        jks:
+          keystore: classpath:/keystores/idp-test.jks
+          storepass: 123456!
+          alias: identity-provider

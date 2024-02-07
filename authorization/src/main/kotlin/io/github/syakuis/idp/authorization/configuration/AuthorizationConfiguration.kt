@@ -1,6 +1,8 @@
 package io.github.syakuis.idp.authorization.configuration
 
+import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
@@ -28,12 +30,11 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
-import java.security.KeyPair
-import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.time.Duration
 import java.util.*
+
 
 /**
  * http://localhost:8080/oauth2/authorize?response_type=code&client_id=client-id&redirect_uri=http://localhost:8080&scope=profile&state=abc123
@@ -45,12 +46,15 @@ import java.util.*
 class AuthorizationConfiguration {
     @Value("\${idp.security.login-form-url}")
     private lateinit var loginFormUrl: String
+    @Value("\${idp.security.oauth2.authorizationserver.jwt.issuer-uri}")
+    private lateinit var issuerUri: String
 
     @Order(1)
     @Bean
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java).oidc(Customizer.withDefaults())
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
+            .oidc(Customizer.withDefaults())
 
         http.exceptionHandling{
             it.defaultAuthenticationEntryPointFor(LoginUrlAuthenticationEntryPoint(loginFormUrl)
@@ -92,38 +96,24 @@ class AuthorizationConfiguration {
     }
 
     @Bean
-    fun jwkSource(): JWKSource<SecurityContext> {
-        val keyPair =  generateRsaKey()
-        val publicKey = keyPair.public as RSAPublicKey
-        val privateKey = keyPair.private as RSAPrivateKey
-        val rsaKey = RSAKey.Builder(publicKey)
-            .privateKey(privateKey).keyID(UUID.randomUUID().toString()).build()
-
-
-        return ImmutableJWKSet(JWKSet(rsaKey))
-    }
-
-    private fun generateRsaKey(): KeyPair {
-        val keyPair: KeyPair
-
-        try {
-            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-            keyPairGenerator.initialize(2048)
-            keyPair = keyPairGenerator.generateKeyPair()
-        } catch (e: Exception) {
-            throw IllegalStateException(e)
-        }
-
-        return keyPair
+    fun jwkSource(rsaPrivateKey: RSAPrivateKey, rsaPublicKey: RSAPublicKey): JWKSource<SecurityContext> {
+        val rsaKey: RSAKey = RSAKey.Builder(rsaPublicKey)
+            .privateKey(rsaPrivateKey)
+            .keyID(UUID.randomUUID().toString())
+            .keyUse(KeyUse.SIGNATURE)
+            .algorithm(JWSAlgorithm.RS256)
+            .build()
+        val jwkSet = JWKSet(rsaKey)
+        return ImmutableJWKSet(jwkSet)
     }
 
     @Bean
     fun jwtDecoder(jwkSource: JWKSource<SecurityContext>): JwtDecoder {
-        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
+        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {
-        return AuthorizationServerSettings.builder().build()
+        return AuthorizationServerSettings.builder().issuer(issuerUri).build()
     }
 }
