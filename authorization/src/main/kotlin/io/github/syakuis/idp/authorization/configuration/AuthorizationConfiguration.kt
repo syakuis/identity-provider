@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import io.github.syakuis.idp.authorization.configuration.custom.CustomJwtTokenCustomizer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
@@ -45,6 +48,10 @@ class AuthorizationConfiguration {
         http.exceptionHandling{
             it.defaultAuthenticationEntryPointFor(LoginUrlAuthenticationEntryPoint(loginFormUrl)
                 , MediaTypeRequestMatcher(MediaType.TEXT_HTML))
+        }
+
+        http.oauth2ResourceServer {
+            it.jwt(Customizer.withDefaults())
         }
 
         return http.build()
@@ -84,5 +91,10 @@ class AuthorizationConfiguration {
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {
         return AuthorizationServerSettings.builder().build()
+    }
+
+    @Bean
+    fun jwtCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
+        return CustomJwtTokenCustomizer()
     }
 }

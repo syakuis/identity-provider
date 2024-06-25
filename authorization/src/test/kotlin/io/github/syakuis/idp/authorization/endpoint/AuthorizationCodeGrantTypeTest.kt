@@ -1,7 +1,10 @@
 package io.github.syakuis.idp.authorization.endpoint
 
-import io.kotest.core.spec.DisplayName
+import com.jayway.jsonpath.JsonPath
 import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -10,6 +13,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.oidc.OidcScopes
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.MockMvc
@@ -28,9 +33,13 @@ import org.springframework.web.util.UriComponentsBuilder
 class AuthorizationCodeGrantTypeTest : ShouldSpec() {
     @Autowired
     private lateinit var mvc: MockMvc
+    @Autowired
+    private lateinit var jwtDecoder: JwtDecoder
+
     private var host = "http://localhost:8082";
 
     private var code = ""
+    private var accessToken = ""
 
     private val clientId = "8ec2ed80-6af0-46fa-9d6b-7ca9c5c01ea2"
     private val clientSecret = "secret"
@@ -75,7 +84,7 @@ class AuthorizationCodeGrantTypeTest : ShouldSpec() {
             }
 
             should("인증 코드로 인증 토큰을 얻는 다.") {
-                mvc.post("/oauth2/token") {
+                val result = mvc.post("/oauth2/token") {
                     contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     param("grant_type", AuthorizationGrantType.AUTHORIZATION_CODE.value)
                     param("code", code)
@@ -92,7 +101,17 @@ class AuthorizationCodeGrantTypeTest : ShouldSpec() {
                     jsonPath("$.refresh_token") {
                         isNotEmpty()
                     }
-                }
+                }.andReturn()
+
+                val accessToken = JsonPath.read<String>(result.response.contentAsString, "$.access_token")
+
+                accessToken.split(".").shouldHaveSize(3)
+
+                val jwt: Jwt = jwtDecoder.decode(accessToken)
+
+                jwt.shouldNotBeNull()
+
+                jwt.claims["custom-claim"].shouldBe("custom-value")
             }
         }
     }
