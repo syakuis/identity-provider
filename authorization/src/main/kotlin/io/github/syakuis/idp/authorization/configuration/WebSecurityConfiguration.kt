@@ -20,17 +20,19 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
-class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
-    @Value("\${idp.security.login-form-url}")
-    private lateinit var loginFormUrl: String
-
+class WebSecurityConfiguration(
+    private val passwordEncoder: PasswordEncoder,
+    private val securityProperties: SecurityProperties
+) {
     @Bean
     @ConditionalOnMissingBean(UserDetailsService::class)
     fun userDetailsService(): UserDetailsService {
-        return InMemoryUserDetailsManager(User.withUsername("test")
-            .password(passwordEncoder.encode("1234"))
-            .roles("USER")
-            .build())
+        return InMemoryUserDetailsManager(
+            User.withUsername("test")
+                .password(passwordEncoder.encode("1234"))
+                .roles("USER")
+                .build()
+        )
     }
 
     @Bean
@@ -48,7 +50,7 @@ class WebSecurityConfiguration(private val passwordEncoder: PasswordEncoder) {
             }
 
             formLogin {
-                loginPage = loginFormUrl
+                loginPage = securityProperties.loginUrl
                 permitAll()
             }
 
