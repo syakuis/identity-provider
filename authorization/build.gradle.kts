@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+
     implementation(project(":spring-web"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -12,8 +14,8 @@ dependencies {
     implementation("org.springframework.security:spring-security-test")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 
-    testImplementation("com.h2database:h2:$h2Version")
-    compileOnly("com.h2database:h2:$h2Version")
+    testImplementation("com.h2database:h2")
+    compileOnly("com.h2database:h2")
 }
 
 application {

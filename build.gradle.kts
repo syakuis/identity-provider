@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val springCloudVersion by extra { "2022.0.1" }
-val h2Version by extra { "1.4.200" }
 
 val kotlinVersion by extra { "1.8.22" }
 val kotestVersion by extra { "5.6.2" }
@@ -11,10 +10,11 @@ val snippetsDir by extra { file("$buildDir/generated-snippets") }
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.1.0"
+    id("org.springframework.boot") version "3.3.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.8.22"
+    kotlin("kapt") version "1.8.22"
     id("org.jetbrains.kotlin.plugin.spring") version "1.8.22"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.8.22"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.8.22"
@@ -58,6 +58,7 @@ tasks {
 allprojects {
     apply(plugin = "java")
     apply(plugin = "kotlin")
+    apply(plugin = "org.jetbrains.kotlin.kapt")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
 
 
